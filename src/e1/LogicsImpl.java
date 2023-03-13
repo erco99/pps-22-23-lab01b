@@ -6,6 +6,7 @@ public class LogicsImpl implements Logics {
 	
 	private final Pair<Integer,Integer> pawn;
 	private Pair<Integer,Integer> knight;
+
 	private final Random random = new Random();
 	private final int size;
 	 

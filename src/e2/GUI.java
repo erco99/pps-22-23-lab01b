@@ -16,23 +16,24 @@ public class GUI extends JFrame {
     private final Map<JButton,Pair<Integer,Integer>> buttons = new HashMap<>();
     private final Logics logics;
     
-    public GUI(int size) {
-        this.logics = new LogicsImpl(size);
+    public GUI(int size, int mines) {
+        this.logics = new LogicsImpl(size, mines);
+        this.logics.setGrid();
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(100*size, 100*size);
-        
+
         JPanel panel = new JPanel(new GridLayout(size,size));
         this.getContentPane().add(BorderLayout.CENTER,panel);
-        
+
         ActionListener onClick = (e)->{
             final JButton bt = (JButton)e.getSource();
             final Pair<Integer,Integer> pos = buttons.get(bt);
-            boolean aMineWasFound = false; // call the logic here to tell it that cell at 'pos' has been seleced
+            boolean aMineWasFound = this.logics.hit(pos); // call the logic here to tell it that cell at 'pos' has been seleced
             if (aMineWasFound) {
                 quitGame();
                 JOptionPane.showMessageDialog(this, "You lost!!");
             } else {
-                drawBoard();            	
+                drawBoard();
             }
             boolean isThereVictory = false; // call the logic here to ask if there is victory
             if (isThereVictory){
@@ -70,9 +71,9 @@ public class GUI extends JFrame {
     private void quitGame() {
         this.drawBoard();
     	for (var entry: this.buttons.entrySet()) {
-            // call the logic here
-            // if this button is a mine, draw it "*"
-            // disable the button
+            int cellValue = this.logics.getGrid().getCellValue(entry.getValue());
+            entry.getKey().setText(cellValue == -1 ? "*" : Integer.toString(cellValue));
+            entry.getKey().setEnabled(false);
     	}
     }
 
@@ -81,6 +82,13 @@ public class GUI extends JFrame {
             // call the logic here
             // if this button is a cell with counter, put the number
             // if this button has a flag, put the flag
+            int cellValue = this.logics.getGrid().getCellValue(entry.getValue());
+            if (cellValue != 0) {
+                entry.getKey().setText(Integer.toString(cellValue));
+                entry.getKey().setEnabled(false);
+            } else {
+
+            }
     	}
     }
     
